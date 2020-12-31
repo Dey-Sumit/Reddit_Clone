@@ -52,12 +52,10 @@ const getPost = async (req: Request, res: Response) => {
 
 const commentOnPost = async (req: Request, res: Response) => {
    const { identifier, slug } = req.params
-   const body = req.body
+   const body = req.body.body
 
    try {
       const post = await Post.findOneOrFail({ identifier, slug })
-      console.log(post)
-      console.log(body)
 
       const comment = new Comment({
          body,
@@ -65,7 +63,7 @@ const commentOnPost = async (req: Request, res: Response) => {
          post,
       })
       await comment.save()
-      return res.json({ comment })
+      return res.json(comment)
    } catch (error) {
       console.log(error.message)
       return res.status(404).json({ error: 'Post Not Found' })

@@ -8,9 +8,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@svgr/webpack": "^5.5.0",
     "autoprefixer": "^10.1.0",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
+    "datejs": "^1.0.0-rc3",
+    "dayjs": "^1.9.8",
     "next": "10.0.4",
     "postcss": "^8.2.2",
     "react": "17.0.1",

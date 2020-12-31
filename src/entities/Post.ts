@@ -7,6 +7,7 @@ import {
    ManyToOne,
    JoinColumn,
    OneToMany,
+   AfterLoad,
 } from 'typeorm'
 
 import bcrypt from 'bcrypt'
@@ -15,6 +16,7 @@ import User from './User'
 import { makeId, slugify } from '../utils/helpers'
 import Sub from './Sub'
 import Comment from './Comment'
+import { Expose } from 'class-transformer'
 
 @TOEntity('posts')
 export default class Post extends Entity {
@@ -40,6 +42,10 @@ export default class Post extends Entity {
    @Column()
    subName: string
 
+   //TODO fix this
+   @Column()
+   username: string
+
    @ManyToOne(() => User, user => user.posts)
    @JoinColumn({ name: 'username', referencedColumnName: 'username' })
    user: User
@@ -51,9 +57,20 @@ export default class Post extends Entity {
    @OneToMany(() => Comment, comment => comment.post)
    comments: Comment[]
 
+   @Expose()
+   get url(): string {
+      return `/r/${this.subName}/${this.identifier}/${this.slug}`
+   }
+
    @BeforeInsert()
    makeIdAndSlug() {
       this.identifier = makeId(7)
       this.slug = slugify(this.title)
    }
+
+   // protected url: string
+   // @AfterLoad()
+   // createFields() {
+   //    this.url =
+   // }
 }

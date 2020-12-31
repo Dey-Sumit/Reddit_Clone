@@ -1,65 +1,107 @@
+import axios from 'axios'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Link from 'next/link'
+import { Fragment, useEffect, useState } from 'react'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+import { Post } from '../types'
+
+dayjs.extend(relativeTime)
 
 export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+   const [posts, setPosts] = useState<Post[]>([])
+   useEffect(() => {
+      axios
+         .get('/posts')
+         .then(res => setPosts(res.data))
+         .catch(error => console.log(error))
+   }, [])
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+   return (
+      <div className='pt-12'>
+         <Head>
+            <title>Create Next App</title>
+            <link rel='icon' href='/favicon.ico' />
+         </Head>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+         <div className='container flex pt-6 '>
+            {/* Post Feed */}
+            <div className='w-160'>
+               {posts.map(post => (
+                  <div
+                     key={post.identifier}
+                     className='flex mb-4 bg-white rounded'>
+                     {/* Vote Section */}
+                     <div className='w-10 text-center bg-gray-200 rounded-l'>
+                        <p>V</p>
+                     </div>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+                     {/* Post data section */}
+                     <div className='w-full p-2'>
+                        <div className='flex items-center'>
+                           <Link href={`r/${post.subName}`}>
+                              <Fragment>
+                                 <img
+                                    src='https://i2.wp.com/cdn.jotfor.ms/assets/img/v4/avatar/Podo-Avatar2-01.png?ssl=1'
+                                    className='w-6 h-6 mr-3 rounded-full cursor-pointer '
+                                    alt=''
+                                 />
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+                                 <a className='text-sm font-bold cursor-pointer hover:underline'>
+                                    /r/{post.subName}
+                                 </a>
+                              </Fragment>
+                           </Link>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+                           <p className='text-sm text-gray-600'>
+                              <span className='mx-1'>•</span>
+                              Posted by
+                              {/* //TODO fix the user */}
+                              <Link href={`/u/user`}>
+                                 <a className='mx-1 hover:underline'>/u/user</a>
+                              </Link>
+                              <Link href={post.url}>
+                                 <a className='mx-1 hover:underline'>
+                                    {dayjs(post.createdAt).fromNow()}
+                                 </a>
+                              </Link>
+                           </p>
+                        </div>
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+                        <Link href={post.url}>
+                           <a className='my-1 text-md '>{post.title}</a>
+                        </Link>
+                        {post.body && (
+                           <p className='my-1 text-sm'>{post.body}</p>
+                        )}
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+                        <div className='flex'>
+                           <Link href={post.url}>
+                              <a>
+                                 <div className='p-1 mr-2 text-gray-500 rounded cursor-pointer hover:bg-gray-200'>
+                                    <i className='mr-1 fa-xs fas fa-comment-alt'></i>
+                                    <span className='font-bold'>
+                                       20 Comments
+                                    </span>
+                                 </div>
+                              </a>
+                           </Link>
+                           <div className='p-1 mr-2 text-gray-500 rounded cursor-pointer hover:bg-gray-200'>
+                              <i className='mr-1 fa-xs fas fa-bookmark'></i>
+                              <span className='font-bold'>Save</span>
+                           </div>
+                           <div className='p-1 mr-2 text-gray-500 rounded cursor-pointer hover:bg-gray-200'>
+                              <i className='mr-1 fa-xs fas fa-share'></i>
+                              <span className='font-bold'>Share</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               ))}
+            </div>
+            {/* sidebar */}
+         </div>
+      </div>
+   )
 }

@@ -6,12 +6,20 @@ import jwt from 'jsonwebtoken'
 import cookie from 'cookie'
 import auth from '../middlewares/auth'
 
+const mappedErrors = (errors: Object[]) => {
+   let mappedErrors = {}
+   errors.forEach((e: any) => {
+      const key = e.property
+      const value = Object.entries(e.constraints)[0][1]
+      mappedErrors[key] = value
+   })
+   return mappedErrors
+}
+
 const register = async (req: Request, res: Response) => {
    const { email, username, password } = req.body
-   console.log(email, username, password)
 
    try {
-      //TODO validate data
       let errors: any = {}
       const emailUser = await User.findOne({ email })
       const usernameUser = await User.findOne({ username })
@@ -23,15 +31,21 @@ const register = async (req: Request, res: Response) => {
          return res.status(400).json(errors)
       }
 
-      //TODO create the user
+      // create the user Object
       const user = new User({ email, username, password })
 
+      // validation by the model
       errors = await validate(user)
 
-      if (errors.length > 0) return res.status(400).json({ errors })
+      // if errors, then format the error to an object
+      if (errors.length > 0) {
+         return res.status(400).json(mappedErrors(errors))
+      }
 
+      //Everything Fine :) Save the user
       await user.save()
 
+      // generate a token and send it through cookie
       const token = jwt.sign({ username }, process.env.JWT_SECRET!)
       res.set(
          'Set-Cookie',
@@ -43,8 +57,8 @@ const register = async (req: Request, res: Response) => {
             path: '/',
          })
       )
-      //TODO return the user
-      return res.json(user)
+      // return the user
+      return res.status(200).json(user)
    } catch (error) {
       console.log(error)
       res.status(500).send(error)
@@ -64,7 +78,7 @@ const login = async (req: Request, res: Response) => {
       const user = await User.findOne({ username })
 
       if (!user) {
-         return res.status(404).json({ error: 'User not found' })
+         return res.status(404).json({ username: 'User not found' })
       }
 
       const passwordMatched = await bcrypt.compare(password, user.password)

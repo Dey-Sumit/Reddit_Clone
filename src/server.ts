@@ -12,6 +12,7 @@ import subRoutes from './routes/sub'
 
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 dotenv.config()
 const app = express()
@@ -22,6 +23,13 @@ app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.use(trim)
 app.use(cookieParser())
+app.use(
+   cors({
+      credentials: true,
+      origin: process.env.ORIGIN,
+      optionsSuccessStatus: 200,
+   })
+)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)

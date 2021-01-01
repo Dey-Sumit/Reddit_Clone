@@ -16,7 +16,8 @@ import User from './User'
 import { makeId, slugify } from '../utils/helpers'
 import Sub from './Sub'
 import Comment from './Comment'
-import { Expose } from 'class-transformer'
+import { Exclude, Expose } from 'class-transformer'
+import Vote from './Vote'
 
 @TOEntity('posts')
 export default class Post extends Entity {
@@ -54,12 +55,33 @@ export default class Post extends Entity {
    @JoinColumn({ name: 'subName', referencedColumnName: 'name' })
    sub: Sub
 
+   @Exclude()
    @OneToMany(() => Comment, comment => comment.post)
    comments: Comment[]
+
+   @OneToMany(() => Vote, vote => vote.post)
+   votes: Vote[]
 
    @Expose()
    get url(): string {
       return `/r/${this.subName}/${this.identifier}/${this.slug}`
+   }
+
+   @Expose()
+   get commentCount(): number {
+      return this.comments?.length
+   }
+
+   @Expose() get voteScore(): number {
+      return this.votes?.reduce((prev, curr) => prev + (curr.value || 0), 0)
+   }
+
+   protected userVote: number
+   setUserVote(user: User) {
+      console.log('called')
+
+      const index = this.votes?.findIndex(v => v.username === user.username)
+      this.userVote = index > -1 ? this.votes[index].value : 0
    }
 
    @BeforeInsert()
@@ -67,10 +89,4 @@ export default class Post extends Entity {
       this.identifier = makeId(7)
       this.slug = slugify(this.title)
    }
-
-   // protected url: string
-   // @AfterLoad()
-   // createFields() {
-   //    this.url =
-   // }
 }

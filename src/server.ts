@@ -9,6 +9,7 @@ import trim from './middlewares/trim'
 import authRoutes from './routes/auth'
 import postRoutes from './routes/posts'
 import subRoutes from './routes/sub'
+import miscRoutes from './routes/misc'
 
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
@@ -34,6 +35,7 @@ app.use(
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/subs', subRoutes)
+app.use('/api/misc', miscRoutes)
 
 app.listen(PORT, async () => {
    console.log(`Server running on PORT ${PORT}`)

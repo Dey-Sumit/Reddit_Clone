@@ -5,6 +5,7 @@ import User from './../entities/User'
 import jwt from 'jsonwebtoken'
 import cookie from 'cookie'
 import auth from '../middlewares/auth'
+import user from '../middlewares/user'
 
 const mappedErrors = (errors: Object[]) => {
    let mappedErrors = {}
@@ -126,7 +127,7 @@ const router = Router()
 
 router.post('/register', register)
 router.post('/login', login)
-router.post('/me', auth, me)
-router.get('/logout', auth, logout)
+router.post('/me', user, auth, me)
+router.get('/logout', user, auth, logout)
 
 export default router

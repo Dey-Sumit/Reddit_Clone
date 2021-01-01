@@ -1,8 +1,26 @@
+import axios from 'axios'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/router'
+import React, { Fragment } from 'react'
+import { useAuthDispatch, useAuthState } from '../context/auth.context'
 import RedditLogo from '../images/reddit_logo.svg'
 
 const navbar = () => {
+   const { authenticated, loading } = useAuthState()
+   const dispatch = useAuthDispatch()
+   const { push } = useRouter()
+   const logout = () => {
+      axios
+         .get('/auth/logout')
+         .then(() => {
+            dispatch('LOGOUT')
+            dispatch('STOP_LOADING')
+
+            // window.location.reload()
+            push('/login')
+         })
+         .catch(error => console.log(error))
+   }
    return (
       <div className='fixed inset-x-0 top-0 z-10 flex items-center justify-center h-12 px-5 bg-white'>
          <div className='flex items-center'>
@@ -29,14 +47,29 @@ const navbar = () => {
          {/* Auth Buttons */}
 
          <div className='flex'>
-            <Link href='/login'>
-               <a className='w-32 py-1 mr-4 leading-5 hollow blue button'>
-                  Log In{' '}
-               </a>
-            </Link>
-            <Link href='/register'>
-               <a className='w-32 py-1 mr-4 leading-5 blue button'>Register </a>
-            </Link>
+            {!loading &&
+               (authenticated ? (
+                  //Show Logout Button
+                  <button
+                     className='w-32 py-1 mr-4 leading-5 hollow blue button'
+                     onClick={logout}>
+                     Logout{' '}
+                  </button>
+               ) : (
+                  //Show Auth Buttons
+                  <Fragment>
+                     <Link href='/login'>
+                        <a className='w-32 py-1 mr-4 leading-5 hollow blue button'>
+                           Log In{' '}
+                        </a>
+                     </Link>
+                     <Link href='/register'>
+                        <a className='w-32 py-1 mr-4 leading-5 blue button'>
+                           Register{' '}
+                        </a>
+                     </Link>
+                  </Fragment>
+               ))}
          </div>
       </div>
    )

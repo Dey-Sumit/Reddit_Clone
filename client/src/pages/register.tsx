@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import InputGroup from '../components/InputGroup'
 import { useRouter } from 'next/router'
+import { useAuthDispatch, useAuthState } from '../context/auth.context'
 
 const register = () => {
    const [email, setEmail] = useState('')
@@ -13,6 +14,12 @@ const register = () => {
    const [errors, setErrors] = useState<any>({})
 
    const router = useRouter()
+
+   const dispatch = useAuthDispatch()
+
+   const { authenticated } = useAuthState()
+
+   if (authenticated) router.push('/')
 
    const handleRegister = async (e: FormEvent) => {
       e.preventDefault()
@@ -29,10 +36,13 @@ const register = () => {
             password,
             username,
          })
+         dispatch('LOGIN', res.data)
          router.push('/')
       } catch (error) {
          console.log(error.response.data)
          setErrors(error.response.data)
+      } finally {
+         dispatch('STOP_LOADING')
       }
    }
 

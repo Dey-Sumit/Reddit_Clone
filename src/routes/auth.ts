@@ -127,7 +127,7 @@ const router = Router()
 
 router.post('/register', register)
 router.post('/login', login)
-router.post('/me', user, auth, me)
+router.get('/me', user, auth, me)
 router.get('/logout', user, auth, logout)
 
 export default router

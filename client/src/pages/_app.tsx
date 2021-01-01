@@ -2,9 +2,9 @@ import type { AppProps /*, AppContext */ } from 'next/app'
 import Axios from 'axios'
 
 import '../styles/talwind.css'
-import { Fragment } from 'react'
 import Navbar from '../components/navbar'
 import { useRouter } from 'next/router'
+import { AuthProvider } from '../context/auth.context'
 
 Axios.defaults.baseURL = 'http://localhost:5000/api'
 Axios.defaults.withCredentials = true
@@ -16,10 +16,10 @@ function MyApp({ Component, pageProps }: AppProps) {
    const authRoute = authRoutes.includes(pathname)
 
    return (
-      <Fragment>
+      <AuthProvider>
          {!authRoute && <Navbar />}
          <Component {...pageProps} />
-      </Fragment>
+      </AuthProvider>
    )
 }
 

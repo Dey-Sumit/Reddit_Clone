@@ -23,6 +23,9 @@ export default class Sub extends Entity {
    name: string // 7 characters ID
 
    @Column()
+   username: string
+
+   @Column()
    title: string
 
    @Column({ nullable: true, type: 'text' })

@@ -32,6 +32,8 @@ app.use(
    })
 )
 
+app.use(express.static('public'))
+
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/subs', subRoutes)

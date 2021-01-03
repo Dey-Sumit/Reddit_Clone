@@ -80,17 +80,16 @@ const PostCard: React.FC<PostCardProps> = ({
          <div className='w-full p-2'>
             <div className='flex items-center'>
                <Link href={`r/${subName}`}>
-                  <Fragment>
-                     <img
-                        src='https://i2.wp.com/cdn.jotfor.ms/assets/img/v4/avatar/Podo-Avatar2-01.png?ssl=1'
-                        className='w-6 h-6 mr-3 rounded-full cursor-pointer '
-                        alt=''
-                     />
-
-                     <a className='text-sm font-bold cursor-pointer hover:underline'>
-                        /r/{subName}
-                     </a>
-                  </Fragment>
+                  <img
+                     src='https://i2.wp.com/cdn.jotfor.ms/assets/img/v4/avatar/Podo-Avatar2-01.png?ssl=1'
+                     className='w-6 h-6 mr-3 rounded-full cursor-pointer '
+                     alt=''
+                  />
+               </Link>
+               <Link href={`r/${subName}`}>
+                  <a className='text-sm font-bold cursor-pointer hover:underline'>
+                     /r/{subName}
+                  </a>
                </Link>
 
                <p className='text-sm text-gray-600'>
@@ -108,9 +107,9 @@ const PostCard: React.FC<PostCardProps> = ({
             </div>
 
             <Link href={url}>
-               <a className='my-1 text-md '>{title}</a>
+               <a className='my-1 font-bold text-md'>{title}</a>
             </Link>
-            {body && <p className='my-1 text-sm'>{body}</p>}
+            {body && <p className='my-1 text-md'>{body}</p>}
 
             <div className='flex'>
                <Link href={url}>

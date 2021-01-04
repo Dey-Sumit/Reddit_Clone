@@ -1,6 +1,8 @@
 import { Request, Response, Router } from 'express'
+import { getConnection } from 'typeorm'
 import Comment from '../entities/Comment'
 import Post from '../entities/Post'
+import Sub from '../entities/Sub'
 import User from '../entities/User'
 import Vote from '../entities/Vote'
 
@@ -84,6 +86,40 @@ const vote = async (req: Request, res: Response) => {
    }
 }
 
+const topSubs = async (req: Request, res: Response) => {
+   try {
+      // get top 5 subs(by no of posts) using query builder
+
+      /**
+       * SELECT s.title, s.name,
+       * COALESCE('http://localhost:5000/images/' || s."imageUrn" ,'https://www.hostpapa.in/knowledgebase/wp-content/uploads/2018/04/1-13.png') as imageUrl,
+       * count(p.id) as "postCount"
+       * FROM subs s
+       * LEFT JOIN posts p ON s.name = p."subName"
+       * GROUP BY s.title, s.name, imageUrl
+       * ORDER BY "postCount" DESC
+       * LIMIT 5;
+       */
+      const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn" , 'https://www.hostpapa.in/knowledgebase/wp-content/uploads/2018/04/1-13.png')`
+      const subs = await getConnection()
+         .createQueryBuilder()
+         .select(
+            `s.title, s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`
+         )
+         .from(Sub, 's')
+         .leftJoin(Post, 'p', `s.name = p."subName"`)
+         .groupBy('s.title, s.name, "imageUrl"')
+         .orderBy(`"postCount"`, 'DESC')
+         .limit(5)
+         .execute()
+
+      return res.json(subs)
+   } catch (error) {
+      console.error(error)
+   }
+}
+
 const router = Router()
 router.post('/vote', user, auth, vote)
+router.get('/top-subs', topSubs)
 export default router

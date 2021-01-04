@@ -1,6 +1,6 @@
 import { isEmpty } from 'class-validator'
 import { NextFunction, Request, Response, Router } from 'express'
-import { getRepository, SelectQueryBuilder } from 'typeorm'
+import { getConnection, getRepository, SelectQueryBuilder } from 'typeorm'
 import Sub from '../entities/Sub'
 import User from '../entities/User'
 import auth from '../middlewares/auth'

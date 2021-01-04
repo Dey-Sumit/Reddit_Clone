@@ -10,6 +10,7 @@ import {
 import Entity from './Entity'
 import User from './User'
 import Post from './Post'
+import { Expose } from 'class-transformer'
 
 @TOEntity('subs')
 export default class Sub extends Entity {
@@ -43,4 +44,23 @@ export default class Sub extends Entity {
 
    @OneToMany(() => Post, post => post.subName)
    posts: Post[]
+
+   @Expose()
+   get imageUrl(): string {
+      const urn = this.imageUrn
+      if (urn) return `${process.env.APP_URL}/images/${urn}`
+      else {
+         //place holder
+         return 'https://www.hostpapa.in/knowledgebase/wp-content/uploads/2018/04/1-13.png'
+      }
+   }
+   @Expose()
+   get bannerUrl(): string | undefined {
+      const urn = this.bannerUrn
+      if (urn) return `${process.env.APP_URL}/images/${urn}`
+      else {
+         //place holder
+         return undefined
+      }
+   }
 }

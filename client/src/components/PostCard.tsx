@@ -10,17 +10,10 @@ dayjs.extend(relativeTime)
 
 import { BiUpvote, BiDownvote } from 'react-icons/bi'
 import axios from 'axios'
+import ActionButton from './ActionButton'
 
 interface PostCardProps {
    post: Post
-}
-
-const ActionButton = ({ children }) => {
-   return (
-      <div className='p-1 mr-2 text-gray-500 rounded cursor-pointer hover:bg-gray-200'>
-         {children}
-      </div>
-   )
 }
 
 const PostCard: React.FC<PostCardProps> = ({
